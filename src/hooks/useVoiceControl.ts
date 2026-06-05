@@ -14,14 +14,14 @@ export function useVoiceControl(
   const [isListening, setIsListening] = useState(false);
   const [lastTranscript, setLastTranscript] = useState('');
   const recognitionRef = useRef<any>(null);
-  const isListeningRef = useRef(false);  // ref untuk track status di dalam callback
+  const isListeningRef = useRef(false);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;   // false tapi di-restart manual agar lebih stabil
+      recognition.continuous = false;
       recognition.interimResults = false;
       recognition.lang = 'id-ID';
 
@@ -34,44 +34,31 @@ export function useVoiceControl(
         const current = event.resultIndex;
         const transcript = event.results[current][0].transcript.toLowerCase().trim();
         setLastTranscript(transcript);
-
         switch (transcript) {
           case 'relay 1':
-          case 'relay satu':
-            onCommandRecognized('1'); break;
+          case 'relay satu': onCommandRecognized('1'); break;
           case 'relay 2':
-          case 'relay dua':
-            onCommandRecognized('2'); break;
+          case 'relay dua': onCommandRecognized('2'); break;
           case 'relay 3':
-          case 'relay tiga':
-            onCommandRecognized('3'); break;
+          case 'relay tiga': onCommandRecognized('3'); break;
           case 'relay 4':
-          case 'relay empat':
-            onCommandRecognized('4'); break;
-          case 'semua nyala':
-            onCommandRecognized('ON'); break;
-          case 'semua mati':
-            onCommandRecognized('OFF'); break;
+          case 'relay empat': onCommandRecognized('4'); break;
+          case 'semua nyala': onCommandRecognized('ON'); break;
+          case 'semua mati': onCommandRecognized('OFF'); break;
           case 'pola 1':
-          case 'pola satu':
-            onCommandRecognized('POLA1'); break;
+          case 'pola satu': onCommandRecognized('POLA1'); break;
           case 'pola 2':
-          case 'pola dua':
-            onCommandRecognized('POLA2'); break;
-          case 'stop':
-            onCommandRecognized('STOP'); break;
-          case 'baca sensor':
-            readSensorData(); break;
-          default:
-            break;
+          case 'pola dua': onCommandRecognized('POLA2'); break;
+          case 'stop': onCommandRecognized('STOP'); break;
+          case 'baca sensor': readSensorData(); break;
+          default: break;
         }
       };
 
       recognition.onerror = (event: any) => {
         console.error('Speech recognition error', event.error);
-        // Jangan stop jika error 'no-speech' — restart saja
         if (event.error === 'no-speech' && isListeningRef.current) {
-          try { recognition.start(); } catch (e) { /* already started */ }
+          try { recognition.start(); } catch (e) {}
         } else {
           setIsListening(false);
           isListeningRef.current = false;
@@ -79,14 +66,9 @@ export function useVoiceControl(
       };
 
       recognition.onend = () => {
-        // Restart otomatis selama masih dalam mode listening
         if (isListeningRef.current) {
-          try {
-            recognition.start();
-          } catch (e) {
-            setIsListening(false);
-            isListeningRef.current = false;
-          }
+          try { recognition.start(); }
+          catch (e) { setIsListening(false); isListeningRef.current = false; }
         } else {
           setIsListening(false);
         }
@@ -97,9 +79,7 @@ export function useVoiceControl(
 
     return () => {
       isListeningRef.current = false;
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
+      if (recognitionRef.current) recognitionRef.current.abort();
     };
   }, [onCommandRecognized, readSensorData]);
 
@@ -109,11 +89,8 @@ export function useVoiceControl(
       recognitionRef.current?.stop();
       setIsListening(false);
     } else {
-      try {
-        recognitionRef.current?.start();
-      } catch (e) {
-        console.error('Failed to start recognition', e);
-      }
+      try { recognitionRef.current?.start(); }
+      catch (e) { console.error('Failed to start recognition', e); }
     }
   };
 
