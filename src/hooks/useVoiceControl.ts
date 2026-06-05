@@ -15,6 +15,7 @@ export function useVoiceControl(
   const [lastTranscript, setLastTranscript] = useState('');
   const recognitionRef = useRef<any>(null);
   const isListeningRef = useRef(false);
+  const lastCommandTime = useRef(0);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -34,6 +35,9 @@ export function useVoiceControl(
         const current = event.resultIndex;
         const transcript = event.results[current][0].transcript.toLowerCase().trim();
         setLastTranscript(transcript);
+        const now = Date.now();
+        if (now - lastCommandTime.current < 1500) return;
+        lastCommandTime.current = now;
         switch (transcript) {
           case 'relay 1':
           case 'relay satu': onCommandRecognized('1'); break;
