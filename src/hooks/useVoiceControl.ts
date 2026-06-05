@@ -39,25 +39,69 @@ export function useVoiceControl(
         if (now - lastCommandTime.current < 1500) return;
         lastCommandTime.current = now;
         switch (transcript) {
-          case 'relay 1':
-          case 'relay satu': onCommandRecognized('1'); break;
-          case 'relay 2':
-          case 'relay dua': onCommandRecognized('2'); break;
-          case 'relay 3':
-          case 'relay tiga': onCommandRecognized('3'); break;
-          case 'relay 4':
-          case 'relay empat': onCommandRecognized('4'); break;
-          case 'semua nyala': onCommandRecognized('ON'); break;
-          case 'semua mati': onCommandRecognized('OFF'); break;
-          case 'pola 1':
-          case 'pola satu': onCommandRecognized('POLA1'); break;
-          case 'pola 2':
-          case 'pola dua': onCommandRecognized('POLA2'); break;
-          case 'stop': onCommandRecognized('STOP'); break;
-          case 'baca sensor': readSensorData(); break;
-          default: break;
-        }
-      };
+      // Relay ON individual
+      case 'hidupkan relay satu':
+      case 'nyalakan relay satu':
+      case 'relay satu nyala':
+        onCommandRecognized('1'); break;
+      case 'hidupkan relay dua':
+      case 'nyalakan relay dua':
+      case 'relay dua nyala':
+        onCommandRecognized('2'); break;
+      case 'hidupkan relay tiga':
+      case 'nyalakan relay tiga':
+      case 'relay tiga nyala':
+        onCommandRecognized('3'); break;
+      case 'hidupkan relay empat':
+      case 'nyalakan relay empat':
+      case 'relay empat nyala':
+        onCommandRecognized('4'); break;
+    
+      // Relay OFF individual
+      case 'matikan relay satu':
+      case 'relay satu mati':
+        onCommandRecognized('1'); break;
+      case 'matikan relay dua':
+      case 'relay dua mati':
+        onCommandRecognized('2'); break;
+      case 'matikan relay tiga':
+      case 'relay tiga mati':
+        onCommandRecognized('3'); break;
+      case 'matikan relay empat':
+      case 'relay empat mati':
+        onCommandRecognized('4'); break;
+    
+      // Semua relay
+      case 'hidupkan semua':
+      case 'nyalakan semua':
+      case 'semua nyala':
+        onCommandRecognized('ON'); break;
+      case 'matikan semua':
+      case 'semua mati':
+        onCommandRecognized('OFF'); break;
+    
+      // Pola
+      case 'pola satu':
+      case 'pola 1':
+        onCommandRecognized('POLA1'); break;
+      case 'pola dua':
+      case 'pola 2':
+        onCommandRecognized('POLA2'); break;
+      case 'stop':
+      case 'berhenti':
+        onCommandRecognized('STOP'); break;
+    
+      // Info sensor
+      case 'info sensor':
+      case 'baca sensor':
+      case 'berapa suhu':
+      case 'berapa kelembapan':
+      case 'cek suhu':
+        readSensorData(); break;
+    
+      default: break;
+    }
+          };
 
       recognition.onerror = (event: any) => {
         console.error('Speech recognition error', event.error);
