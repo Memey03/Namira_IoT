@@ -57,7 +57,7 @@ export function useVoiceControl(
 
       recognition.onerror = (event: any) => {
         console.error('Speech recognition error', event.error);
-        if (event.error === 'no-speech' && isListeningRef.current) {
+      if ((event.error === 'no-speech' || event.error === 'aborted') && isListeningRef.current) {
           try { recognition.start(); } catch (e) {}
         } else {
           setIsListening(false);
@@ -79,7 +79,7 @@ export function useVoiceControl(
 
     return () => {
       isListeningRef.current = false;
-      if (recognitionRef.current) recognitionRef.current.abort();
+      if (recognitionRef.current) recognitionRef.current.stop()
     };
   }, [onCommandRecognized, readSensorData]);
 
