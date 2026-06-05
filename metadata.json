@@ -1,0 +1,10 @@
+{
+  "name": "Pink IoT Dashboard",
+  "description": "IoT control system dashboard with MQTT and voice control",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
